@@ -83,7 +83,12 @@ function createReplyButton(el) {
 	function getInfo(callback) {
 		var text = highlighter.getText();
 			error = function() {
-				alert('There was an error replying to this tiddler');
+				if (window.location.protocol === 'file:') {
+					alert('You need to be online (i.e. not using a ' +
+						'file:// uri) to reply to this tiddler');
+				} else {
+					alert('There was an error replying to this tiddler');
+				}
 			};
 
 		jQuery.ajax({
@@ -170,38 +175,50 @@ function createReplyButton(el) {
 			devMode = /csrf_token=[0-9]{10}:bengillies/.test(document.cookie);
 
 		return {
-			move: function(pos) {
-				if (devMode) {
-					console.log('y: ', pos.y, 'x: ', pos.x);
-				}
-				$el.animate({
-					top: '+=' + pos.y,
-					left: '+=' + pos.x
-				}, 0);
-			},
 			start: function(payload) {
+				var diff = { y: $el.offset().top, x: $el.offset().left };
+				oldCSS.top = $el.offset().top;
+				oldCSS.left = $el.offset().left;
+				oldCSS.right = $el.css('right');
+				oldCSS.bottom = $el.css('bottom');
 				oldCSS.height = $el.css('height');
+				oldCSS.width = $el.css('width');
 				oldCSS['max-height'] = $el.css('max-height');
-				borderSize = payload.borderSize;
+				oldCSS['max-width'] = $el.css('max-width');
+				oldCSS.margin = $el.css('margin');
 				$el.css({
-					'height': $el.height() + (borderSize * 2),
-					'max-height': 'none'
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
+					margin: 0,
+					width: '100%',
+					height: '100%',
+					'max-height': 'none',
+					'max-width': 'none'
 				});
-				$el.animate({
-					top: '-=' + borderSize,
-					left: '-=' + borderSize,
-					width: '+=' + borderSize * 2
-				}, 0);
-				$el[0].contentWindow.postMessage('initMove', urlBase);
+				$el[0].contentWindow.postMessage(JSON.stringify({
+					type: 'initMove',
+					diff: diff,
+					id: randID
+				}), urlBase);
 			},
-			stop: function() {
-				$el.animate({
-					top: '+=' + borderSize,
-					left: '+=' + borderSize,
-					width: '-=' + borderSize * 2
-				}, 0);
-				$el.css(oldCSS);
-				$el[0].contentWindow.postMessage('initMove', urlBase);
+			stop: function(diff) {
+				$el.css({
+					top: oldCSS.top + diff.y,
+					left: oldCSS.left + diff.x,
+					right: oldCSS.right,
+					bottom: oldCSS.bottom,
+					//margin: oldCSS.margin,
+					height: oldCSS.height,
+					width: oldCSS.width,
+					'max-height': oldCSS['max-height'],
+					'max-width': oldCSS['max-width']
+				});
+				$el[0].contentWindow.postMessage(JSON.stringify({
+					type: 'doneMove',
+					id: randID
+				}), urlBase);
 			}
 		};
 	}
@@ -224,6 +241,7 @@ function createReplyButton(el) {
 		document.body.appendChild(iframe);
 
 		iframe.addEventListener('load', function() {
+			message.id = randID;
 			iframe.contentWindow.postMessage(JSON.stringify(message), urlBase);
 		}, false);
 
@@ -231,20 +249,17 @@ function createReplyButton(el) {
 		var moveBookmarker = Mover($iframe, urlBase);
 
 		window.addEventListener('message', function(event) {
-			if (event.origin === urlBase) {
-				var message = JSON.parse(event.data);
+			var message = JSON.parse(event.data);
+			if (event.origin === urlBase && message.id === randID) {
 				switch (message.type) {
 					case 'close':
 						closeBookmarker();
-						break;
-					case 'move':
-						moveBookmarker.move(message.payload);
 						break;
 					case 'startMove':
 						moveBookmarker.start(message.payload);
 						break;
 					case 'stopMove':
-						moveBookmarker.stop();
+						moveBookmarker.stop(message.diff);
 						break;
 				}
 			}

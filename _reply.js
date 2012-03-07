@@ -12,6 +12,8 @@
  * listening for the data to arrive.
  */
 (function() {
+	var id; // we use this ID to verify that we only take notice of the correct
+			// messages that we receive from postMessage
 
 	var details = {
 		queue: [],
@@ -211,6 +213,9 @@
 	function receiveMessage(event) {
 		var data = JSON.parse(event.data),
 			tid = new tiddlyweb.Tiddler(data.title);
+		if (!id) {
+			id = data.id;
+		}
 		tid.recipe = new tiddlyweb.Recipe(data.space + '_private', '/');
 		tid.get(function(tiddler) {
 			details.set('data', {
@@ -253,8 +258,10 @@
 	function closePage(timeout) {
 		window.setTimeout(function() {
 			details.when('eventSrc', function(src) {
-				src.source.postMessage(JSON.stringify({ type: 'close' }),
-					src.origin);
+				src.source.postMessage(JSON.stringify({
+					type: 'close',
+					id: id
+					}), src.origin);
 			});
 		}, timeout || 0);
 	}
@@ -298,31 +305,39 @@
 
 	function Mover($el) {
 		var moving = false,
-			initPos= {
-				x: 0,
-				y: 0
-			};
+			initPos = {},
+			oldPos = {};
 
 		var src,
-			// we need a large border round the cursor to stopthe mouse leaving
-			// the iframe when we're in move mode. We also need to send this border
-			// size back to the parent window, and have that apply it too.
-			borderSize = 100,
 			height;
 
 		var doMove = function(ev) {
-			src.source.postMessage(JSON.stringify({
-				type: 'move',
-				payload: {
-					x: ev.pageX - initPos.x,
-					y: ev.pageY - initPos.y
-				}
-			}), src.origin);
+			var diff = { x: ev.pageX - oldPos.x, y: ev.pageY - oldPos.y };
+			$el.animate({
+				top: '+=' + diff.y,
+				left: '+=' + diff.x
+			}, 0);
+			oldPos.x = ev.pageX;
+			oldPos.y = ev.pageY;
 		};
 
 		var _receive = function(message) {
-			if (message.data === 'initMove') {
-				$el.show();
+			var payload = JSON.parse(message.data);
+			if (payload.id !== id) {
+				return;
+			}
+			switch(payload.type) {
+				case 'initMove':
+					$el.css({
+						top: payload.diff.y + 'px',
+						left: payload.diff.x + 'px'
+					}).show();
+					initPos.x = oldPos.x = payload.diff.x + oldPos.x;
+					initPos.y = oldPos.y = payload.diff.y + oldPos.y;
+					break;
+				case 'doneMove':
+					$el.show();
+					window.removeEventListener('message', _receive, false);
 			}
 		};
 
@@ -333,25 +348,20 @@
 				} else {
 					moving = true;
 				}
+				oldPos.x = ev.pageX;
+				oldPos.y = ev.pageY;
 				$el.hide();
 				window.addEventListener('message', _receive, false);
-				initPos.x = ev.pageX + borderSize;
-				initPos.y = ev.pageY + borderSize;
 				details.when('eventSrc', function(eventSrc) {
 					src = eventSrc;
 					src.source.postMessage(JSON.stringify({
 						type: 'startMove',
-						payload: { borderSize: borderSize }
+						id: id
 					}), src.origin);
 				});
 				// fix the height so that increasing the iframe height doesn't mess things up
 				height = $el.css('height');
 				$el.css('height', $el.height());
-				// add a border
-				$el.animate({
-					top: '+=' + borderSize,
-					left: '+=' + borderSize
-				}, 0);
 				// stop the user selecting text awkwardly while trying to move
 				$el.css({
 					'-webkit-user-select': 'none',
@@ -369,13 +379,15 @@
 				window.addEventListener('message', _receive, false);
 				moving = false;
 				$el.hide();
-				$el.animate({
-					top: '-=' + borderSize,
-					left: '-=' + borderSize
-				}, 0);
+				$el.css({
+					top: 0,
+					left: 0
+				});
 				$el.css('height', height);
 				src.source.postMessage(JSON.stringify({
-					type: 'stopMove'
+					type: 'stopMove',
+					id: id,
+					diff: { x: oldPos.x - initPos.x, y: oldPos.y - initPos.y }
 				}), src.origin);
 				$el.css({
 					'-webkit-user-select': 'auto',
