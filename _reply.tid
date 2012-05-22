@@ -1,4 +1,5 @@
 modifier: bengillies
+type: text/html
 tags: excludeLists excludeSearch excludeMissing
 
 <!DOCTYPE html>
