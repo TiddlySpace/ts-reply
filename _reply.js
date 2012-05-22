@@ -112,7 +112,7 @@
 	};
 
 	Tab.prototype.getPrivate = function() {
-		return $('.modal-footer [name="private"]input').attr('checked') ?
+		return $('.form-actions [name="private"]input').attr('checked') ?
 						'_private' : '_public';
 	};
 
@@ -189,7 +189,9 @@
 					if (!~data.tags.indexOf(atTag)) {
 						data.tags.push(atTag);
 					}
-					return '[[' + data.tags.join(']] [[') + ']]';
+					return $.map(data.tags, function(tag) {
+						return ~tag.indexOf(' ') ? '[[' + tag + ']]' : tag;
+					}).join(' ');
 				},
 				text: function(data) {
 					var replyMsg;
@@ -203,7 +205,7 @@
 					}
 				}
 			}
-		}),
+		})
 	};
 
 	function pickDefaultTab(data) {
@@ -267,7 +269,7 @@
 	}
 
 	function getCurrentTab() {
-		return $('.tabs .active').data('tab-name');
+		return $('.nav-tabs .active').data('tab-name');
 	}
 
 	function saveBookmark(event) {
@@ -321,7 +323,7 @@
 			oldPos.y = ev.pageY;
 		};
 
-		var _receive = function(message) {
+		var _receive = function _receive(message) {
 			var payload = JSON.parse(message.data);
 			if (payload.id !== id) {
 				return;
@@ -341,7 +343,8 @@
 			}
 		};
 
-		var self = {
+		var self;
+		self = {
 			start: function(ev) {
 				if (moving) {
 					return self.stop(ev);
@@ -404,24 +407,29 @@
 
 $(function() {
 
-	$('.modal-footer [type="submit"]input').click(saveBookmark);
+	$('.form-actions [type="submit"]input').click(saveBookmark);
 	$('.closeBtn').click(closePage);
 
 	var mover = new Mover($('.modal'));
 	$('.modal-header').mousedown(function(ev) {
 		if (ev.target.nodeName !== 'LI' &&
-				$(ev.target).closest('.tabs li, #help, #help-info').length === 0) {
+				$(ev.target).closest('.nav-tabs li, #help, #help-info').length === 0) {
 			mover.start(ev);
 		}
 	});
 	$(document).mouseup(mover.stop);
+
+	$('#help').click(function(ev) {
+		ev.preventDefault();
+		$('#help-info').toggle(100);
+	});
 
 	details.when('data', function(data) {
 		// figure out which tab we should start off on
 		var tab = pickDefaultTab(data);
 
 		// populate the tab with data when the user switches to it
-		$('.tabs').delegate('li', 'click', function(ev) {
+		$('.nav-tabs').delegate('li', 'click', function(ev) {
 			var tabName = $(this).data('tab-name');
 			if (tabs[tabName].isEmpty()) {
 				tabs[tabName].setTab(data);
@@ -429,7 +437,7 @@ $(function() {
 		});
 
 		// initialise the app by switching to the correct tab.
-		$('.tabs li').each(function(i, el) {
+		$('.nav-tabs li').each(function(i, el) {
 			var $el = $(el);
 			if ($el.data('tab-name') === tab) {
 				$el.find('a').click();
@@ -437,10 +445,6 @@ $(function() {
 			}
 		});
 
-		$('#help').click(function(ev) {
-			ev.preventDefault();
-			$('#help-info').toggle(100);
-		});
 
 		// now display the container again
 		$('#container').show();
