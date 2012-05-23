@@ -7,6 +7,7 @@
  * Call this with the element you want to turn into a reply button
  */
 function createReplyButton(el) {
+	var $; // make sure jQuery is mapped to $ internally
 
 	//load jQuery
 	function loadScript(url, testFn, callback) {
@@ -30,6 +31,7 @@ function createReplyButton(el) {
 		function() {
 			return (typeof window.jQuery !== 'undefined');
 		}, function() {
+			$ = jQuery;
 			loadScript('http://tiddlyspace.com/bags/tiddlyspace/tiddlers/chrjs',
 				function() {
 					return (typeof window.tiddlyweb !== 'undefined');
@@ -104,7 +106,7 @@ function createReplyButton(el) {
 
 				url = host.scheme + '://' + space + '.' + host.host +
 					((host.port === '80' || host.port === '443') ?
-						'' : host.port) + '/_reply';
+						'' : ':' + host.port) + '/_reply';
 
 				tiddler.get(function(t) {
 					var _source= t.route(),
