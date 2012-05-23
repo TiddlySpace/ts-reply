@@ -271,16 +271,23 @@ function createReplyButton(el) {
 	// attach the appropriate onclick handler
 	function createButton() {
 		el.style.cursor = 'pointer';
-		el.addEventListener('click', function(event) {
+		$(el).click(function(event) {
 			event.preventDefault();
 			// only show if the iframe isn't already loaded
 			if (!document.getElementById(bookmarkletID)) {
 				getInfo(function(message, url) {
 					// check whether the reply popup is installed or not
 					var urlParts = splitURL(url),
+						fallback,
 						tiddler = new tiddlyweb.Tiddler('_reply');
 						tiddler.recipe = new tiddlyweb.Recipe(message.space +
 							'_public', '/');
+
+					fallback = function() {
+						// They either don't have reply installed or their
+						// browser doesn't support it
+						window.location = urlParts[0] + '/#' + message.title;
+					};
 
 					// disable ControlView
 					jQuery.ajaxSetup({
@@ -289,16 +296,17 @@ function createReplyButton(el) {
 						}
 					});
 
+					if (typeof window.postMessage === 'undefined') {
+						fallback();
+					}
+
 					tiddler.get(function() {
 						// they have the fancy reply button installed
 						sendMessage(message, url);
-					}, function() {
-						// they don't. Just link to the tiddler
-						window.location = urlParts[0] + '/#' + message.title;
-					});
+					}, fallback);
 				});
 			}
-		}, false);
+		});
 
 		// when the button is clicked, any highlighted text disappears before
 		// the event fires. This means we need to find the highlighted text on
