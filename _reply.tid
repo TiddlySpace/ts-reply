@@ -254,8 +254,7 @@ tags: excludeLists excludeSearch excludeMissing
 	</div>
 
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-	<script type="text/javascript" src="http://twitter.github.com/bootstrap/1.4.0/bootstrap-tabs.js"></script>
 	<script type="text/javascript" src="http://tiddlyspace.com/bags/tiddlyspace/tiddlers/chrjs"></script>
-	<script type="text/javascript" src="_reply.js"></script>
+	<script type="text/javascript" src="/bags/common/tiddlers/_reply.js"></script>
 </body>
 </html>
