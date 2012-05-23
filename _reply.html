@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Reply</title>
-	<link rel="stylesheet" href="http://tiddlyspace.com/bags/benspa_public/tiddlers/bootvelcro.css">
+	<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.3.0/bootstrap.min.css">
 	<style>
 		html,
 		body {
@@ -22,36 +22,22 @@
 			padding: 5px 0 0;
 			position: absolute;
 			width: 100%;
-			background-color: #e0e0e0;
+			background-color: whiteSmoke;
 			-webkit-border-radius: 6px 6px 0 0;
 			-moz-border-radius: 6px 6px 0 0;
 			border-radius: 6px 6px 0 0;
 			cursor: move;
 		}
 
-		.form-actions {
+		.modal-footer {
 			position: absolute;
 			bottom: 0;
-			box-sizing: border-box;
-			width: 100%;
-			margin: 0;
-			border-radius: 0 0 6px 6px;
-			background-color: #e0e0e0;
-			border-top: 1px solid gray;
+			left: 0;
+			right: 0;
 		}
 
-		.form-actions input.btn {
+		.modal-footer input.btn {
 			width: auto;
-			float: right;
-			margin: 0 0.2em;
-		}
-
-		.closeBtn {
-			background-color: #DCE7F1 !important;
-		}
-
-		.primary {
-			background-color: #09F !important;
 		}
 
 		h1 {
@@ -73,10 +59,6 @@
 			width: 510px;
 			position: absolute;
 			box-shadow: #444 0px 0px 10px 2px;
-			border-radius: 6px;
-			background-color: white;
-			border: 1px solid gray;
-			background-color: #F0F4F8;
 		}
 
 		label em {
@@ -90,31 +72,29 @@
 			bottom: 0;
 			left: 0;
 			right: 0;
-			margin: 65px 20px 67px;
-			background-color: transparent;
+			margin-top: 65px;
+			margin-bottom: 67px;
 		}
 
-		.nav-tabs {
+		.tabs {
 			padding-left: 1%;;
 			margin: 0;
+			height: 48px;
 			width: 99%;
-			border-color: gray;
 		}
 
-		.nav-tabs > li {
+		.tabs > li {
 			cursor: pointer;
 		}
 
-		.nav-tabs > li > a {
-			line-height: 2.4em;
+		.tabs > li > a {
+			line-height: 46px;
 			font-weight: bold;
 			font-size: 100%;
 		}
 
-		.nav-tabs > li.active > a{
-			background-color: #F0F4F8;
-			border-color: gray;
-			border-bottom-color: #F0F4F8;
+		.tab-pane {
+			display: none;
 		}
 
 		.active {
@@ -150,30 +130,26 @@
 			border: 2px dotted #555;
 		}
 
-		label {
+		.private {
 			font-weight: bold;
-		}
-
-		.form-actions label {
-			float: left;
-			margin-top: 0.75em;
-		}
-
-		fieldset input,
-		fieldset textarea {
-			width: 90%;
-			border-color: gray;
+			width: auto;
+			margin-top: 3px;
+			margin-left: 6px;
 		}
 
 		@media all and (max-width: 550px) {
 			.modal {
 				width: 95%;
 			}
+
+			fieldset input[type=text],
+			fieldset textarea {
+				width: 95% !important;
+			}
 		}
 
 		#help {
 			position: absolute;
-			border: 0;
 			right: 4px;
 			top: 5px;
 			text-indent: -9999px;
@@ -181,7 +157,7 @@
 			height: 16px;
 			width: 16px;
 			background: none;
-			background-image: url(http://tiddlyspace.com/bags/common/tiddlers/help.png);
+			background-image: url(/bags/common/tiddlers/help.png);
 			background-repeat: no-repeat;
 			background-color: white;
 			z-index: 2;
@@ -190,7 +166,7 @@
 
 		#help-info {
 			padding: 0;
-			border: 1px solid gray;
+			border: 1px solid #DDD;
 			width: 60%;
 			height: 50px;
 			color: #404040;
@@ -208,43 +184,47 @@
 			padding: 10px 25px;
 			margin-bottom: 0;
 		}
+
+		#postForm {
+			background-color: white;
+		}
 	</style>
 </head>
 <body>
 	<div id="container">
-		<form action="#" class="modal">
+		<form action="#" class="span-one-third modal">
 			<div class="modal-header">
 				<button id="help">help</button>
 				<div id="help-info" style="display:none;"><p>
 				Found something interesting? Write about it in your own space. <a href="http://docs.tiddlyspace.com/Reply to this Tiddler" target="_blank">Find out more</a>
 				</p></div>
-				<ul class="nav nav-tabs" data-tabs="tabs">
-					<li class="active" data-tab-name="post"><a href="#postForm">Reply</a></li>
+				<ul class="tabs" data-tabs="tabs">
+					<li data-tab-name="post"><a href="#postForm">Reply</a></li>
 				</ul>
 			</div>
 
 
-			<fieldset id="postForm" class="modal-body">
-				<label>Title
-					<input type="text" name="title">
+			<fieldset id="postForm" class="form-stacked modal-body tab-pane">
+				<label class='clearfix'>Title
+					<input type="text" class="span8" name="title">
 				</label>
-				<input type="hidden" name="url">
-				<label>Post
-					<textarea name="text" rows="8"></textarea>
+				<input type="hidden" class="span8" name="url">
+				<label class='clearfix'>Post
+					<textarea class="span8" name="text" rows="8"></textarea>
 				</label>
-				<label>Tags
-					<input type="text" name="tags" value="">
+				<label class='clearfix'>Tags
+					<input type="text" class="span8" name="tags" value="">
 				</label>
 			</fieldset>
 
 
-			<div class="form-actions">
-				<label class="checkbox">
+			<div class="modal-footer">
+				<label class='private'>
 					<input type="checkbox" name="private" val="private">
 					keep private
 				</label>
-				<input type="submit" class="btn primary btn-large" value="Done">
-				<input type="button" class="btn btn-large closeBtn" value="Cancel">
+				<input type="submit" class="btn primary large" value="Done">
+				<input type="button" class="btn large closeBtn" value="Cancel">
 			</div>
 		</form>
 	</div>
