@@ -70,10 +70,19 @@ function createReplyButton(el) {
 
 	function getTitle() {
 		var tiddlywiki = jQuery(el).closest('[tiddler].tiddler'),
+			titleInTW, includedTitle,
+			regex = /^(.*) \*\(@(.*)\)\*$/,
 			htmlRep = jQuery('#title');
 		if (tiddlywiki.length > 0) {
 			// we're in a TiddlyWiki tiddler
-			return tiddlywiki.attr('tiddler');
+			titleInTW = tiddlywiki.attr('tiddler');
+			includedTitle = regex.exec(titleInTW);
+			if (includedTitle) {
+				// we're in an included tiddler
+				return includedTitle.slice(1); // return the title and space
+			} else {
+				return titleInTW;
+			}
 		} else if (htmlRep.length > 0) {
 			// we're in the HTML representation (or similar)
 			return htmlRep.text();
@@ -98,11 +107,22 @@ function createReplyButton(el) {
 			success: function(stat) {
 				var title = getTitle(),
 					host = stat.server_host,
-					url,
+					url, targetSpace,
 					space = stat.username,
+					tiddler;
+
+				if (typeof title !== 'string') {
+					targetSpace = title[1];
+					title = title[0];
 					tiddler = new tiddlyweb.Tiddler(title);
-					tiddler.recipe = new tiddlyweb.Recipe(stat.space.recipe,
-						'/');
+					tiddler.recipe = new tiddlyweb.Recipe(targetSpace +
+						'_public', '/');
+				} else {
+					targetSpace = stat.space.name;
+					tiddler = new tiddlyweb.Tiddler(title);
+					tiddler.recipe = new tiddlyweb.Recipe(stat.space.recipe
+						, '/');
+				}
 
 				url = host.scheme + '://' + space + '.' + host.host +
 					((host.port === '80' || host.port === '443') ?
@@ -110,7 +130,7 @@ function createReplyButton(el) {
 
 				tiddler.get(function(t) {
 					var _source= t.route(),
-						origin = stat.space.name;
+						origin = targetSpace;
 
 					callback({
 						title: title,
