@@ -1,3 +1,7 @@
+modifier: bengillies
+type: text/javascript
+tags: excludeLists excludeSearch excludeMissing
+
 /*
  * Create a reply button and add it to the page
  *
