@@ -23,7 +23,7 @@
 
 		var replyBtn = $('<button/>', {
 			'class': 'reply-btn',
-			html: '<img src="/bags/sandben_public/tiddlers/reply.png"/>'
+			html: '<img src="/bags/common/tiddlers/reply.png"/>'
 		}).appendTo(document.body);
 
 		if (typeof createReplyButton === 'function') {
