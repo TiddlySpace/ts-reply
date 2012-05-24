@@ -1,4 +1,11 @@
-build:
+.PHONY: build image
+
+image:
+	base64 reply.png > .reply.png.base64
+	cat reply.png.meta .reply.png.base64 > reply.png.tid
+	rm .reply.png.base64
+
+build: image
 	cat _reply.html.meta _reply.html > _reply.tid
 	cat _reply.js.meta _reply.js > _reply.js.tid
 	cat _reply-loader.js.meta _reply-loader.js > _reply-loader.js.tid
