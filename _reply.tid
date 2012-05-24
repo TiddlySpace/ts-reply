@@ -37,6 +37,7 @@ tags: excludeLists excludeSearch excludeMissing
 			position: absolute;
 			bottom: 0;
 			box-sizing: border-box;
+			-moz-box-sizing: border-box;
 			width: 100%;
 			margin: 0;
 			border-radius: 0 0 6px 6px;
