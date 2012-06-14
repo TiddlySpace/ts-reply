@@ -1,6 +1,7 @@
 modifier: bengillies
 type: text/javascript
 tags: excludeLists excludeSearch excludeMissing
+_cache-max-age: 43200
 
 /*
  * A new reply button for TiddlySpace
