@@ -39,7 +39,8 @@ function createReplyButton(el) {
 			$ = jQuery;
 			loadScript('http://tiddlyspace.com/bags/tiddlyspace/tiddlers/chrjs',
 				function() {
-					return (typeof window.tiddlyweb !== 'undefined');
+					return (typeof window.tiddlyweb !== 'undefined' &&
+						typeof window.tiddlyweb.Tiddler === 'function');
 				}, createButton);
 		});
 
