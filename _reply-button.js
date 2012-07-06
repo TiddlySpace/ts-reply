@@ -252,7 +252,7 @@ function createReplyButton(el) {
 		return parts;
 	}
 
-	function sendMessage(message, url) {
+	function sendMessage(message, url, fn) {
 		var urlBase = splitURL(url)[0];
 
 		stylesheet.innerHTML = style;
@@ -266,6 +266,7 @@ function createReplyButton(el) {
 		iframe.addEventListener('load', function() {
 			message.id = randID;
 			iframe.contentWindow.postMessage(JSON.stringify(message), urlBase);
+			fn();
 		}, false);
 
 		var $iframe = jQuery(iframe);
@@ -293,6 +294,7 @@ function createReplyButton(el) {
 	function createButton() {
 		el.style.cursor = 'pointer';
 		$(el).click(function(event) {
+			$(el).addClass('loading');
 			event.preventDefault();
 			// only show if the iframe isn't already loaded
 			if (!document.getElementById(bookmarkletID)) {
@@ -308,6 +310,7 @@ function createReplyButton(el) {
 						// They either don't have reply installed or their
 						// browser doesn't support it
 						window.location = urlParts[0] + '/#' + message.title;
+						$(el).removeClass('loading');
 					};
 
 					// disable ControlView
@@ -323,7 +326,9 @@ function createReplyButton(el) {
 
 					tiddler.get(function() {
 						// they have the fancy reply button installed
-						sendMessage(message, url);
+						sendMessage(message, url, function() {
+							$(el).removeClass('loading');
+						});
 					}, fallback);
 				});
 			}
