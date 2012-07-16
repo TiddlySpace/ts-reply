@@ -218,6 +218,22 @@
 		if (!id) {
 			id = data.id;
 		}
+
+		function mergeTags(oldTags, newTags) {
+			if (!newTags) {
+				return oldTags;
+			} else if (!oldTags) {
+				return newTags || [];
+			} else {
+				$.each(newTags, function(i, tag) {
+					if (tag.charAt(0) === '@' && !~oldTags.indexOf(tag)) {
+						oldTags.push(tag);
+					}
+				});
+				return oldTags;
+			}
+		}
+
 		tid.recipe = new tiddlyweb.Recipe(data.space + '_private', '/');
 		tid.get(function(tiddler) {
 			details.set('data', {
@@ -225,7 +241,7 @@
 				text: tiddler.text,
 				space: data.space,
 				_source: data._source,
-				tags: tiddler.tags || [],
+				tags: mergeTags(tiddler.tags, data.tags),
 				origin: data.origin,
 				quote: false
 			});
@@ -234,7 +250,7 @@
 				source: event.source
 			});
 		}, function() {
-			data.tags = [];
+			data.tags = data.tags || [];
 			data.quote = true;
 			details.set('data', data);
 			details.set('eventSrc', {
