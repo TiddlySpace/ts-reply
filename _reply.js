@@ -250,7 +250,7 @@
 				source: event.source
 			});
 		}, function() {
-			data.tags = data.tags || [];
+			data.tags = mergeTags([], data.tags || []);
 			data.quote = true;
 			details.set('data', data);
 			details.set('eventSrc', {
