@@ -100,7 +100,7 @@ tags: excludeLists excludeSearch excludeMissing
 		}
 
 		.nav-tabs {
-			padding-left: 1%;;
+			padding-left: 1%;
 			margin: 0;
 			width: 99%;
 			border-color: gray;
