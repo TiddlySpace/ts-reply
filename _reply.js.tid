@@ -226,16 +226,16 @@ tags: excludeLists excludeSearch excludeMissing
 		function mergeTags(oldTags, newTags) {
 			if (!newTags) {
 				return oldTags;
-			} else if (!oldTags) {
-				return newTags || [];
-			} else {
-				$.each(newTags, function(i, tag) {
-					if (tag.charAt(0) === '@' && !~oldTags.indexOf(tag)) {
-						oldTags.push(tag);
-					}
-				});
-				return oldTags;
 			}
+			if (!oldTags) {
+				oldTags = [];
+			}
+			$.each(newTags, function(i, tag) {
+				if (tag.charAt(0) === '@' && !~oldTags.indexOf(tag)) {
+					oldTags.push(tag);
+				}
+			});
+			return oldTags;
 		}
 
 		tid.recipe = new tiddlyweb.Recipe(data.space + '_private', '/');
