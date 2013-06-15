@@ -27,12 +27,12 @@ function createReplyButton(el) {
 	}
 
 	// load jQuery, then load chrjs
-	loadScript('http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js',
+	loadScript('/bags/common/tiddlers/jquery.js',
 		function() {
 			return (typeof window.jQuery !== 'undefined');
 		}, function() {
 			$ = jQuery;
-			loadScript('http://tiddlyspace.com/bags/tiddlyspace/tiddlers/chrjs',
+			loadScript('/bags/tiddlyspace/tiddlers/chrjs',
 				function() {
 					return (typeof window.tiddlyweb !== 'undefined' &&
 						typeof window.tiddlyweb.Tiddler === 'function');

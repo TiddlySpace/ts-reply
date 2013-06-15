@@ -8,7 +8,7 @@ tags: excludeLists excludeSearch excludeMissing
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Reply</title>
-	<link rel="stylesheet" href="http://tiddlyspace.com/bags/benspa_public/tiddlers/bootvelcro.css">
+	<link rel="stylesheet" href="//tiddlyspace.com/bags/benspa_public/tiddlers/bootvelcro.css">
 	<style>
 		html,
 		body {
@@ -186,7 +186,7 @@ tags: excludeLists excludeSearch excludeMissing
 			height: 16px;
 			width: 16px;
 			background: none;
-			background-image: url(http://tiddlyspace.com/bags/common/tiddlers/help.png);
+			background-image: url(/bags/common/tiddlers/help.png);
 			background-repeat: no-repeat;
 			background-color: white;
 			z-index: 2;
@@ -221,7 +221,7 @@ tags: excludeLists excludeSearch excludeMissing
 			<div class="modal-header">
 				<button id="help">help</button>
 				<div id="help-info" style="display:none;"><p>
-				Found something interesting? Write about it in your own space. <a href="http://docs.tiddlyspace.com/Reply to this Tiddler" target="_blank">Find out more</a>
+				Found something interesting? Write about it in your own space. <a href="//docs.tiddlyspace.com/Reply to this Tiddler" target="_blank">Find out more</a>
 				</p></div>
 				<ul class="nav nav-tabs" data-tabs="tabs">
 					<li class="active" data-tab-name="post"><a href="#postForm">Reply</a></li>
@@ -254,8 +254,9 @@ tags: excludeLists excludeSearch excludeMissing
 		</form>
 	</div>
 
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-	<script type="text/javascript" src="http://tiddlyspace.com/bags/tiddlyspace/tiddlers/chrjs"></script>
+	<script type="text/javascript"
+            src="/bags/common/tiddlers/jquery.js"></script>
+	<script type="text/javascript" src="/bags/tiddlyspace/tiddlers/chrjs"></script>
 	<script type="text/javascript" src="/bags/common/tiddlers/_reply.js"></script>
 </body>
 </html>

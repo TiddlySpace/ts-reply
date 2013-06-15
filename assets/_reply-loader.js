@@ -14,6 +14,7 @@
 			'position: absolute;',
 			'top: 0px;',
 			'right: 52px;',
+			'height: 24px;',
 			'width: 24px;',
 			'padding: 0',
 		'}',
