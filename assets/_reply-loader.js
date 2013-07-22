@@ -7,8 +7,8 @@
 
 (function($) {
 
-	$(function() {
-		$('<style/>').html(['.reply-btn {',
+    function renderBtn() {
+        $('<style/>').html(['.reply-btn {',
 			'border: 0;',
 			'background: transparent;',
 			'position: absolute;',
@@ -22,18 +22,30 @@
 			'width: 100%',
 		'}'].join('')).prependTo(document.head);
 
-		var replyBtn = $('<button/>', {
+        var replyBtn = $('<button/>', {
 			'class': 'reply-btn',
 			html: '<img src="/bags/common/tiddlers/reply.png" alt="reply to this tiddler"/>'
 		}).appendTo(document.body);
 
-		if (typeof createReplyButton === 'function') {
-			createReplyButton(replyBtn[0]);
-		} else {
-			$.getScript('/bags/common/tiddlers/_reply-button.js', function() {
-				createReplyButton(replyBtn[0]);
-			});
-		}
+        return replyBtn;
+    }
+
+	$(function() {
+
+        $.getJSON("/status", function(data) {
+            if(data && data.username !== "GUEST") {
+                var replyBtn = renderBtn();
+
+                if (typeof createReplyButton === 'function') {
+                    createReplyButton(replyBtn[0]);
+                } else {
+                    $.getScript('/bags/common/tiddlers/_reply-button.js', function() {
+                        createReplyButton(replyBtn[0]);
+                    });
+                }
+            }
+        })
+
 	});
 
 }(jQuery));
