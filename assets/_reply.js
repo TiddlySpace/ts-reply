@@ -112,7 +112,7 @@
 	};
 
 	Tab.prototype.getPrivate = function() {
-		return $('.form-actions [name="private"]input').attr('checked') ?
+		return $('.form-actions [name="private"]input').is(':checked') ?
 						'_private' : '_public';
 	};
 
