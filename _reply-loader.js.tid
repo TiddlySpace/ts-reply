@@ -36,21 +36,27 @@ _cache-max-age: 43200
     }
 
 	$(function() {
+		function initializeReply() {
+			if (window.tiddlyweb.status.username
+				&& window.tiddlyweb.status.username !== "GUEST") {
+				var replyBtn = renderBtn();
 
-        $.getJSON("/status", function(data) {
-            if(data && data.username !== "GUEST") {
-                var replyBtn = renderBtn();
+				if (typeof createReplyButton === 'function') {
+					createReplyButton(replyBtn[0]);
+				} else {
+					$.getScript('/bags/common/tiddlers/_reply-button.js',
+						function() {
+							createReplyButton(replyBtn[0]);
+					});
+				}
+			}
+		}
 
-                if (typeof createReplyButton === 'function') {
-                    createReplyButton(replyBtn[0]);
-                } else {
-                    $.getScript('/bags/common/tiddlers/_reply-button.js', function() {
-                        createReplyButton(replyBtn[0]);
-                    });
-                }
-            }
-        })
-
+		if (!window.tiddlyweb || !window.tiddlyweb.status) {
+			$.getScript("/status.js", initializeReply)
+		} else {
+			initializeReply();
+		}
 	});
 
 }(jQuery));
